@@ -42,8 +42,8 @@ class _HomePageState extends State<HomePage> {
         onPressed: () {
           Navigator.pushNamed(context, '/ingredients');
         },
-        child: Icon(Icons.arrow_forward_ios),
-        backgroundColor: Colors.green,
+        child: Icon(Icons.arrow_forward),
+        backgroundColor: Colors.red[300],
       ),
     );
   }

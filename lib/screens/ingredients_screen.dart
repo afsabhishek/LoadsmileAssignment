@@ -24,12 +24,39 @@ class _IngredientsPageState extends State<IngredientsPage> {
               _ingredientsList == null ? _getIngredientsList() : prepareList()),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/recipelist',
-              arguments: RecipeListArgs(getSelectedIngredients()));
+          if ( getSelectedIngredients().length > 0 ) {
+            Navigator.pushNamed(context, '/recipelist',
+                arguments: RecipeListArgs(getSelectedIngredients()));
+            clearSelectedIngredients();
+          } else  {
+            _showDialog();
+          }
         },
-        child: Icon(Icons.arrow_forward_ios),
-        backgroundColor: Colors.green,
+        child: Icon(Icons.arrow_forward),
+        backgroundColor: Colors.red[300],
       ),
+    );
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Uh oh!"),
+          content: new Text("Zero ingredient is selected"),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -62,6 +89,15 @@ class _IngredientsPageState extends State<IngredientsPage> {
     return list;
   }
 
+  clearSelectedIngredients() {
+    List<String> list = new List<String>();
+    _ingredientsList.forEach((item) {
+      if (item.isSelected)
+        item.isSelected = false;
+    });
+    return list;
+  }
+
   Future<dynamic> getIngredients() {
     return http.get(
         "https://lb7u7svcm5.execute-api.ap-southeast-1.amazonaws.com/dev/ingredients");
@@ -72,20 +108,26 @@ class _IngredientsPageState extends State<IngredientsPage> {
       itemCount: _ingredientsList.length,
       itemBuilder: (context, index) {
         IngredientsDetails item = _ingredientsList[index];
-        return CheckboxListTile(
-          title: Text(item.ingredientName),
-          subtitle: Text(item.lastdate),
-          value: item.isSelected,
-          onChanged: (bool value) {
-            if (item.isSelected == value) {
-              return;
-            }
-            setState(() {
-              _ingredientsList[index].isSelected = value;
-            });
-          },
+        return Container(
+          color: _ingredientsList[index].isSelected
+              ? Colors.red[100]
+              : Colors.white,
+          child: ListTile(
+            title: Text(item.ingredientName),
+            subtitle: Text("Use by "+ item.lastdate, style: TextStyle(fontSize: 10),),
+            onTap: () => _onSelected(index),
+          ),
         );
       },
     );
+  }
+
+  int _selectedIndex = -1;
+
+  _onSelected(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _ingredientsList[index].isSelected = !_ingredientsList[index].isSelected;
+    });
   }
 }

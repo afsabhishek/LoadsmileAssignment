@@ -24,8 +24,10 @@ class _RecipeListState extends State<RecipeList> {
             if (projectSnap.connectionState == ConnectionState.none ||
                 projectSnap.connectionState == ConnectionState.waiting ||
                 projectSnap.hasData == null) {
-              return Container(
-                child: Text("Loading"),
+              return Center(
+                child: Text(
+                    "Loading",
+                ),
               );
             }
             final recipeDetails = json.decode(projectSnap.data.body) as List;
@@ -37,7 +39,11 @@ class _RecipeListState extends State<RecipeList> {
                 RecipeModel item = itemList[index];
                 return ExpansionTile(
                   title: Text(item.title),
-                  subtitle: Text(item.ingredients.join(', ')),
+                  subtitle: Text("Click to see Ingredients",style: TextStyle(fontSize: 10),),
+                  children: item.ingredients.map((data) => ListTile(
+                    leading: Icon(Icons.keyboard_arrow_right),
+                    title: Text(data, style: TextStyle(fontSize: 12),),
+                  )).toList(),
                 );
               },
             );
