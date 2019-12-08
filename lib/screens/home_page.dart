@@ -19,7 +19,7 @@ class _HomePageState extends State<HomePage> {
       lastDate: DateTime(2030),
       builder: (BuildContext context, Widget child) {
         return Theme(
-          data: ThemeData.dark(),
+          data: ThemeData.light(),
           child: child,
         );
       },
@@ -33,9 +33,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Choose date"),
-      ),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -43,10 +40,15 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               Text(
                 new DateFormat.yMMMd().format(selectedDate),
-                style: Theme.of(context).textTheme.display1,
+                style: Theme.of(context).textTheme.display3,
               ),
               RaisedButton(
-                child: Text("Choose Date"),
+                shape: RoundedRectangleBorder(
+                    borderRadius: new BorderRadius.circular(15.0),
+                    side: BorderSide(color: Colors.blue[300])
+                ),
+                child: Text("Choose Date", style: TextStyle(color: Colors.white),),
+                color: Colors.blue[200],
                 onPressed: () {
                   _selectDate(context);
                 },
@@ -61,7 +63,7 @@ class _HomePageState extends State<HomePage> {
               arguments: IngredientsScreenArgs(selectedDate));
         },
         child: Icon(Icons.arrow_forward),
-        backgroundColor: Colors.red[300],
+        backgroundColor: Colors.blue[300],
       ),
     );
   }

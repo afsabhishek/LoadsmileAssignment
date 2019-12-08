@@ -15,7 +15,7 @@ class _RecipeListState extends State<RecipeList> {
     final RecipeListArgs args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Reciep List"),
+        title: Text("Recipe List"),
       ),
       body: SafeArea(
         child: FutureBuilder(
@@ -26,7 +26,8 @@ class _RecipeListState extends State<RecipeList> {
                 projectSnap.hasData == null) {
               return Center(
                 child: Text(
-                  "Loading",
+                  "Loading...",
+                  style: TextStyle(fontSize: 20),
                 ),
               );
             }

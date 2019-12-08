@@ -36,7 +36,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
           }
         },
         child: Icon(Icons.arrow_forward),
-        backgroundColor: Colors.red[300],
+        backgroundColor: Colors.blue[300],
       ),
     );
   }
@@ -70,8 +70,11 @@ class _IngredientsPageState extends State<IngredientsPage> {
         if (projectSnap.connectionState == ConnectionState.none ||
             projectSnap.connectionState == ConnectionState.waiting ||
             projectSnap.hasData == null) {
-          return Container(
-            child: Text("Loading"),
+          return Center(
+            child: Text(
+              "Loading...",
+              style: TextStyle(fontSize: 20),
+            ),
           );
         }
         final ingredientDetails = json.decode(projectSnap.data.body) as List;
@@ -112,8 +115,8 @@ class _IngredientsPageState extends State<IngredientsPage> {
         IngredientsDetails item = _ingredientsList[index];
         return Container(
           color: isExpired(selectedDate, item.ingredientExpireDate)
-              ? Colors.grey
-              : item.isSelected ? Colors.red[100] : Colors.white,
+              ? Colors.grey[300]
+              : item.isSelected ? Colors.blue[100] : Colors.white,
           child: ListTile(
             title: Text(item.ingredientName),
             subtitle: Text(
