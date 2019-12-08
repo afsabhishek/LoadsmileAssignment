@@ -1,9 +1,12 @@
-class IngredientsDetails{
+class IngredientsDetails {
   String ingredientName;
   String lastdate;
   bool isSelected = false;
+  DateTime get ingredientExpireDate {
+    return DateTime.parse(lastdate);
+  }
 
-  IngredientsDetails() ;
+  IngredientsDetails();
 
   factory IngredientsDetails.fromJson(Map model) {
     IngredientsDetails details = new IngredientsDetails();

@@ -4,6 +4,7 @@ import 'package:assignment/ingredients_model.dart';
 import 'package:assignment/screens/reciep_list.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class IngredientsPage extends StatefulWidget {
   @override
@@ -11,24 +12,26 @@ class IngredientsPage extends StatefulWidget {
 }
 
 class _IngredientsPageState extends State<IngredientsPage> {
-  List<IngredientsDetails> _ingredientsList = null;
-
+  List<IngredientsDetails> _ingredientsList;
   @override
   Widget build(BuildContext context) {
+    final IngredientsScreenArgs args =
+        ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Choose date"),
+        title: Text("Choose Ingredients"),
       ),
       body: SafeArea(
-          child:
-              _ingredientsList == null ? _getIngredientsList() : prepareList()),
+          child: _ingredientsList == null
+              ? _getIngredientsList(args.selectedDate)
+              : prepareList(args.selectedDate)),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if ( getSelectedIngredients().length > 0 ) {
+          if (getSelectedIngredients().length > 0) {
             Navigator.pushNamed(context, '/recipelist',
                 arguments: RecipeListArgs(getSelectedIngredients()));
             clearSelectedIngredients();
-          } else  {
+          } else {
             _showDialog();
           }
         },
@@ -60,7 +63,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
     );
   }
 
-  _getIngredientsList() {
+  _getIngredientsList(DateTime selectedDate) {
     return FutureBuilder(
       future: getIngredients(),
       builder: (context, projectSnap) {
@@ -72,11 +75,11 @@ class _IngredientsPageState extends State<IngredientsPage> {
           );
         }
         final ingredientDetails = json.decode(projectSnap.data.body) as List;
-        final items = (ingredientDetails as List)
+        final items = ingredientDetails
             .map((i) => new IngredientsDetails.fromJson(i))
             .toList();
         _ingredientsList = items.toList();
-        return prepareList();
+        return prepareList(selectedDate);
       },
     );
   }
@@ -92,8 +95,7 @@ class _IngredientsPageState extends State<IngredientsPage> {
   clearSelectedIngredients() {
     List<String> list = new List<String>();
     _ingredientsList.forEach((item) {
-      if (item.isSelected)
-        item.isSelected = false;
+      if (item.isSelected) item.isSelected = false;
     });
     return list;
   }
@@ -103,31 +105,45 @@ class _IngredientsPageState extends State<IngredientsPage> {
         "https://lb7u7svcm5.execute-api.ap-southeast-1.amazonaws.com/dev/ingredients");
   }
 
-  prepareList() {
+  prepareList(DateTime selectedDate) {
     return ListView.builder(
       itemCount: _ingredientsList.length,
       itemBuilder: (context, index) {
         IngredientsDetails item = _ingredientsList[index];
         return Container(
-          color: _ingredientsList[index].isSelected
-              ? Colors.red[100]
-              : Colors.white,
+          color: isExpired(selectedDate, item.ingredientExpireDate)
+              ? Colors.grey
+              : item.isSelected ? Colors.red[100] : Colors.white,
           child: ListTile(
             title: Text(item.ingredientName),
-            subtitle: Text("Use by "+ item.lastdate, style: TextStyle(fontSize: 10),),
-            onTap: () => _onSelected(index),
+            subtitle: Text(
+              "Use by: " +
+                  new DateFormat.yMMMd().format(item.ingredientExpireDate),
+              style: TextStyle(fontSize: 10),
+            ),
+            onTap: () {
+              if (isExpired(selectedDate, item.ingredientExpireDate)) return;
+              _onSelected(index);
+            },
           ),
         );
       },
     );
   }
 
-  int _selectedIndex = -1;
-
   _onSelected(int index) {
     setState(() {
-      _selectedIndex = index;
       _ingredientsList[index].isSelected = !_ingredientsList[index].isSelected;
     });
   }
+
+  bool isExpired(DateTime selectedDate, DateTime expiryDate) {
+    return selectedDate.difference(expiryDate).inDays >= 0;
+  }
+}
+
+class IngredientsScreenArgs {
+  DateTime selectedDate;
+
+  IngredientsScreenArgs(this.selectedDate);
 }

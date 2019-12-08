@@ -26,7 +26,7 @@ class _RecipeListState extends State<RecipeList> {
                 projectSnap.hasData == null) {
               return Center(
                 child: Text(
-                    "Loading",
+                  "Loading",
                 ),
               );
             }
@@ -39,11 +39,16 @@ class _RecipeListState extends State<RecipeList> {
                 RecipeModel item = itemList[index];
                 return ExpansionTile(
                   title: Text(item.title),
-                  subtitle: Text("Click to see Ingredients",style: TextStyle(fontSize: 10),),
-                  children: item.ingredients.map((data) => ListTile(
-                    leading: Icon(Icons.keyboard_arrow_right),
-                    title: Text(data, style: TextStyle(fontSize: 12),),
-                  )).toList(),
+                  //subtitle: Text("Click to see Ingredients",style: TextStyle(fontSize: 10),),
+                  children: item.ingredients
+                      .map((data) => ListTile(
+                            leading: Icon(Icons.keyboard_arrow_right),
+                            title: Text(
+                              data,
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ))
+                      .toList(),
                 );
               },
             );

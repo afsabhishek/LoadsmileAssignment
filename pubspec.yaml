@@ -22,6 +22,7 @@ dependencies:
   http:
   mobx: ^0.3.8
   flutter_mobx: ^0.3.3
+  intl: ^0.16.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
