@@ -103,9 +103,10 @@ class _IngredientsPageState extends State<IngredientsPage> {
     return list;
   }
 
-  Future<dynamic> getIngredients() {
-    return http.get(
-        "https://lb7u7svcm5.execute-api.ap-southeast-1.amazonaws.com/dev/ingredients");
+  Future<dynamic> getIngredients() async{
+    return await http.get("https://lb7u7svcm5.execute-api.ap-southeast-1.amazonaws.com/dev/ingredients").catchError(() {
+        print('No internet access');
+      });
   }
 
   prepareList(DateTime selectedDate) {
